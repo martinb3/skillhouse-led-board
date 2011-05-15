@@ -3,8 +3,14 @@ import scala.collection.mutable
 
 
 class FontCharacter(val character : Char, lines : Array[String]) {
-
 	override def toString() : String = "font-"+character.toString
+	
+	def to2DimArray() = {
+		// 7 rows, 5 columns
+		var arr = Array.ofDim[Boolean](7,5) 
+		// then figure out a way to concatenate them, and 
+		// scroll pointers across them
+	}
 	
 	def toPacket(c: Color, fromx: Int, fromy: Int) : Array[Packet] = {
 		val on = mutable.ArrayBuffer[Packet]()

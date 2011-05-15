@@ -29,7 +29,7 @@ class TwoWaySerialComm(val bq: BlockingQueue[Packet]) {
 
 			if (commPort.isInstanceOf[SerialPort]) {
 				val serialPort = commPort.asInstanceOf[SerialPort];
-				serialPort.setSerialPortParams(4800, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+				serialPort.setSerialPortParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 
 				val in = serialPort.getInputStream();
 				val out = serialPort.getOutputStream();
@@ -97,7 +97,7 @@ object Driver {
 			var portId = en.nextElement().asInstanceOf[CommPortIdentifier];
 			System.out.println(portId.getName());
 		}
-
+		
 		val bq = new LinkedBlockingQueue[Packet]
 		val twsc = (new TwoWaySerialComm(bq)); twsc.connect("/dev/ttyUSB0");
 
@@ -106,12 +106,13 @@ object Driver {
 		bq.offer(Packet(101, black)) // clear x 2
 		bq.offer(DrawPacket) // command "draw" packet        
 
-		//readloop(bq);
-		//rainbow(bq);
+
 		do {
-			showFonts(bq, "Testing123!?");
+			//showFonts(bq, "Christian super awesome!");
+			//readloop(bq);
+			rainbow(bq);
 			Thread.sleep(3*1000);
-		} while (false);
+		} while (true);
 	}
 	
 	def showFonts(bq:BlockingQueue[Packet]) : Unit = showFonts(bq, Font.fontmap)
@@ -169,8 +170,9 @@ object Driver {
 		}
 	}
 	
+	var colors = Color.rainbowSequence
 	def rainbow(bq:BlockingQueue[Packet]) = {
-		var colors = Color.rainbowSequence
+		
 		for(i <- 0 to 99) {
 			val thisColor = colors(0); colors = colors.drop(1)
 			bq.offer(Packet(i, thisColor))
